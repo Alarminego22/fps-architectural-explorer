@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Architectural Exploration – First Person</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #111; font-family: system-ui, sans-serif; }
+    #canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    #ui {
+      position: absolute; inset: 0; pointer-events: none;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    #crosshair {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.7);
+      border-radius: 50%; pointer-events: none;
+    }
+    #hud {
+      padding: 12px 16px; color: rgba(255,255,255,0.85); font-size: 13px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8); background: linear-gradient(to bottom, rgba(0,0,0,0.45), transparent);
+    }
+    #instructions {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.65); color: #fff; padding: 10px 18px; border-radius: 8px;
+      font-size: 13px; text-align: center; max-width: 90%; pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    #instructions.hidden { opacity: 0; }
+    #pause-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+      display: none; align-items: center; justify-content: center; flex-direction: column;
+      color: #fff; pointer-events: auto; cursor: pointer;
+    }
+    #pause-overlay.visible { display: flex; }
+    #pause-overlay h2 { font-weight: 500; margin-bottom: 8px; }
+    #pause-overlay p { opacity: 0.8; font-size: 14px; }
+
+    /* Mobile controls */
+    #mobile-controls {
+      display: none; position: absolute; inset: 0; pointer-events: none;
+    }
+    @media (hover: none) and (pointer: coarse) {
+      #mobile-controls { display: block; }
+      #crosshair { display: none; }
+      #instructions { display: none; }
+    }
+    .joystick-zone {
+      position: absolute; bottom: 30px; left: 30px;
+      width: 140px; height: 140px; pointer-events: auto;
+    }
+    .joystick-base {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.25);
+      position: relative;
+    }
+    .joystick-knob {
+      position: absolute; width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,0.45); border: 2px solid rgba(255,255,255,0.6);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      touch-action: none;
+    }
+    .action-buttons {
+      position: absolute; bottom: 40px; right: 30px;
+      display: flex; flex-direction: column; gap: 14px; pointer-events: auto;
+    }
+    .action-btn {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.35);
+      color: #fff; font-size: 12px; font-weight: 600; display: flex;
+      align-items: center; justify-content: center; user-select: none;
+      touch-action: none;
+    }
+    .action-btn:active, .action-btn.active {
+      background: rgba(255,255,255,0.35);
+    }
+    #look-zone {
+      position: absolute; top: 0; right: 0; width: 55%; height: 70%;
+      pointer-events: auto; touch-action: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="ui">
+    <div id="hud">Loading environment…</div>
+    <div id="crosshair"></div>
+    <div id="instructions">Click to lock mouse · WASD move · Mouse look · Space jump · Shift sprint · ESC unlock</div>
+    <div id="pause-overlay">
+      <h2>Controls paused</h2>
+      <p>Click anywhere to resume</p>
+    </div>
+  </div>
+
+  <div id="mobile-controls">
+    <div id="look-zone"></div>
+    <div class="joystick-zone" id="joystick-zone">
+      <div class="joystick-base">
+        <div class="joystick-knob" id="joystick-knob"></div>
+      </div>
+    </div>
+    <div class="action-buttons">
+      <div class="action-btn" id="btn-sprint">SPRINT</div>
+      <div class="action-btn" id="btn-jump">JUMP</div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/",
+      "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+    }
+  }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
